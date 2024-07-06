@@ -1,0 +1,36 @@
+version: '3.3'
+services:
+  web:
+    build:
+      context: ./docker/php
+      args:
+        PHP_APACHE_VERSION: ${PHP_APACHE_VERSION}
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    volumes:
+      - ./html:/var/www/html
+  db:
+    build:
+      context: ./docker/mysql
+      args:
+        MYSQL_VERSION: ${MYSQL_VERSION}
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  phpmyadmin:
+    build: 
+      context: ./docker/phpmyadmin
+      args:
+        PHPMYADMIN_VERSION: ${PHPMYADMIN_VERSION}
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
